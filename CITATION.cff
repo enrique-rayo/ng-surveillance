@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: ng-surveillance
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Rayo
+    given-names: Enrique
+    orcid: # TODO: add ORCID
+version: 0.1.0
+date-released: "2026-09-14"
+repository-code: "https://github.com/enrique-rayo/ng-surveillance"

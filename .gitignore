@@ -1,0 +1,9 @@
+work/
+.nextflow/
+.nextflow.log*
+results/
+*.fastq.gz
+.DS_Store
+*.swp
+.vscode/
+.idea/
