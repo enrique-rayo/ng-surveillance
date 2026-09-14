@@ -7,3 +7,5 @@ results/
 *.swp
 .vscode/
 .idea/
+__pycache__/
+*.pyc
