@@ -46,8 +46,8 @@ process SNIPPY {
  * (--mincov 10 --minfrac 0.05 vs. --mincov 5 --minfrac 0.75). This is a QC/
  * heterozygosity-detection branch, not a divergence-from-reference analysis:
  * expect very few filtered variants per sample (verified in practice: 6
- * filtered variants from 1279 raw candidate sites for one real 
- * sample), with the raw candidate set feeding the het-site QC downstream.
+ * filtered variants from 1279 raw candidate sites for one real sample),
+ * with the raw candidate set feeding the het-site QC downstream.
  *
  * The reference here is per-sample (each sample's own clean contigs), unlike
  * SNIPPY's shared batch-wide reference + BWA index — hence a distinct process
