@@ -1,0 +1,51 @@
+Bootstrap: docker
+From: python:3.11.13-slim-bookworm
+
+%labels
+    org.opencontainers.image.title SensiTyper-sensitype
+    org.opencontainers.image.version 68ba20b063040bcc024cad4cecb5158362295d0f
+    org.opencontainers.image.source https://github.com/leosanbu/SensiTyper
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install --yes --no-install-recommends \
+        ca-certificates \
+        git
+    git init /tmp/SensiTyper
+    git -C /tmp/SensiTyper remote add origin \
+        https://github.com/leosanbu/SensiTyper.git
+    git -C /tmp/SensiTyper fetch --depth 1 origin \
+        68ba20b063040bcc024cad4cecb5158362295d0f
+    git -C /tmp/SensiTyper checkout --detach FETCH_HEAD
+    test "$(git -C /tmp/SensiTyper rev-parse HEAD)" = \
+        "68ba20b063040bcc024cad4cecb5158362295d0f"
+
+    install -d /opt/sensityper
+    install -m 0755 /tmp/SensiTyper/sensiscript_v2.6.py \
+        /opt/sensityper/sensiscript_v2.6.py
+    install -m 0644 /tmp/SensiTyper/html_generator.py \
+        /opt/sensityper/html_generator.py
+    install -m 0644 /tmp/SensiTyper/resources/sensitype.db \
+        /opt/sensityper/sensitype.db
+    install -m 0644 /tmp/SensiTyper/resources/sensitype.penA.db \
+        /opt/sensityper/sensitype.penA.db
+
+    rm -rf /tmp/SensiTyper
+    apt-get purge --yes --auto-remove git
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PATH=/opt/sensityper:$PATH
+
+%runscript
+    exec python3 /opt/sensityper/sensiscript_v2.6.py "$@"
+
+%test
+    python3 /opt/sensityper/sensiscript_v2.6.py --help >/dev/null
+    test -s /opt/sensityper/sensitype.db
+    test -s /opt/sensityper/sensitype.penA.db
+    test -s /opt/sensityper/html_generator.py
