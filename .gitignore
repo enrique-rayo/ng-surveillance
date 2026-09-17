@@ -17,3 +17,6 @@ __pycache__/
 !test_data/SYNTHETIC_R2_001.fastq.gz
 !test_data/SYNTHETIC_B_R1_001.fastq.gz
 !test_data/SYNTHETIC_B_R2_001.fastq.gz
+
+# Local .def-built container images — rebuild from the .def, don't commit.
+containers/**/*.sif
