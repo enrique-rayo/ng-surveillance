@@ -28,6 +28,14 @@ are skipped with a warning rather than failing. To run everything:
         --snippy_reference /path/to/reference.fasta \
         --snippy_mask /path/to/mask.bed
 
+Note: adding --kraken2_db against the bundled test_data/ will fail at
+KRAKEN2_BATCH_SUMMARY. Those synthetic reads are simulated with no
+noise, so Kraken2 classifies every single read, and the batch-summary
+plot can't handle a sample landing at exactly 0% unclassified (details
+in test_data/README.md). This isn't a bug in Kraken2 itself — it's a
+known limitation of that one synthetic dataset. Run --kraken2_db against
+real sequencing data and this isn't an issue.
+
 The reference FASTA needs a BWA index alongside it (.amb .ann .bwt .pac
 .sa). --run_phylogeny turns on the Gubbins recombination-masking step,
 once Snippy-core has run; --run_assembly_mapped_snippy turns on the
