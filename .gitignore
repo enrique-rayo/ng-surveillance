@@ -9,3 +9,11 @@ results/
 .idea/
 __pycache__/
 *.pyc
+
+# Synthetic test fixtures (explicit exception to the blanket *.fastq.gz rule
+# above) — regenerated with realistic coverage in ng-pipeline commit 30f57b2,
+# confirmed not real patient reads.
+!test_data/SYNTHETIC_R1_001.fastq.gz
+!test_data/SYNTHETIC_R2_001.fastq.gz
+!test_data/SYNTHETIC_B_R1_001.fastq.gz
+!test_data/SYNTHETIC_B_R2_001.fastq.gz
