@@ -1,6 +1,164 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "title": "ng-surveillance pipeline parameters",
-  "description": "",
-  "definitions": {}
+  "description": "Whole-genome sequencing pipeline: QC, assembly, typing, AMR detection, phylogenetics.",
+  "type": "object",
+  "definitions": {
+    "input_output_options": {
+      "title": "Input/output options",
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "default": "test_data",
+          "format": "directory-path",
+          "description": "Directory of paired-end FASTQ files, named <sample>_R1_001.fastq.gz / <sample>_R2_001.fastq.gz."
+        },
+        "batch_name": {
+          "type": "string",
+          "description": "Label used in output paths and reports. Defaults to the Nextflow run name if not set; set it explicitly for stable, comparable output directories across runs."
+        }
+      }
+    },
+    "organism_specific_options": {
+      "title": "Organism-specific options",
+      "type": "object",
+      "description": "Values tied to the target organism. Change these to adapt the pipeline to a different species.",
+      "properties": {
+        "target_genus_taxid": {
+          "type": "integer",
+          "default": 482,
+          "description": "NCBI taxid for the target genus, used to summarise Kraken2 results."
+        },
+        "target_species_taxid": {
+          "type": "integer",
+          "default": 485,
+          "description": "NCBI taxid for the target species, used to summarise Kraken2 results."
+        },
+        "qc_control_sample_pattern": {
+          "type": "string",
+          "description": "Regex matching control-sample IDs, used to exclude them from batch-relative QC flagging."
+        },
+        "prokka_genus": {
+          "type": "string",
+          "description": "Genus passed to Prokka's --genus flag. Leave unset to omit --genus entirely."
+        }
+      }
+    },
+    "reference_databases": {
+      "title": "Reference databases",
+      "type": "object",
+      "description": "External databases. Each stage is skipped with a warning if its database isn't set.",
+      "properties": {
+        "kraken2_db": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "Kraken2 database directory."
+        },
+        "ariba_db": {
+          "type": "string",
+          "format": "file-path",
+          "description": "Prepared ARIBA database, as a .tar.gz archive."
+        },
+        "pyngost_db": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "pyngoST allelesDB directory."
+        },
+        "snippy_reference": {
+          "type": "string",
+          "format": "file-path",
+          "description": "Reference genome FASTA for reference-mapped Snippy. Needs a BWA index alongside it (.amb .ann .bwt .pac .sa)."
+        },
+        "snippy_mask": {
+          "type": "string",
+          "format": "file-path",
+          "description": "BED file of regions to mask (repeats, phage, high SNP density) before building the core-genome alignment."
+        }
+      }
+    },
+    "sample_selection_options": {
+      "title": "Sample selection and assembly options",
+      "type": "object",
+      "properties": {
+        "min_contig_length": {
+          "type": "integer",
+          "default": 1000,
+          "description": "Minimum contig length kept after assembly."
+        },
+        "use_reassembly_for": {
+          "type": "array",
+          "description": "Sample IDs whose reassembly output should be used downstream instead of the original assembly. Empty by default."
+        },
+        "pyngost_exclude_samples": {
+          "type": "string",
+          "description": "Comma-separated sample IDs to exclude from batch-wide pyngoST typing."
+        },
+        "snippy_core_exclude_samples": {
+          "type": "string",
+          "description": "Comma-separated non-control sample IDs to exclude from batch-wide Snippy-core."
+        }
+      }
+    },
+    "pipeline_branches": {
+      "title": "Optional pipeline branches",
+      "type": "object",
+      "properties": {
+        "run_phylogeny": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run Gubbins recombination masking on the Snippy-core alignment."
+        },
+        "run_assembly_mapped_snippy": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run the assembly-mapped Snippy branch (each sample mapped to its own assembly). Heterozygous-site QC for this branch isn't built yet, so only variant calling runs."
+        }
+      }
+    },
+    "resource_options": {
+      "title": "Resource options",
+      "type": "object",
+      "properties": {
+        "spades_threads": {
+          "type": "integer",
+          "default": 16,
+          "description": "CPUs for SPAdes."
+        },
+        "spades_mem": {
+          "type": "integer",
+          "default": 64,
+          "description": "Memory for SPAdes, in GB."
+        },
+        "quast_threads": {
+          "type": "integer",
+          "default": 8,
+          "description": "CPUs for QUAST."
+        },
+        "ariba_threads": {
+          "type": "integer",
+          "default": 1,
+          "description": "CPUs for ARIBA."
+        },
+        "snippy_threads": {
+          "type": "integer",
+          "default": 16,
+          "description": "CPUs for Snippy."
+        },
+        "gubbins_threads": {
+          "type": "integer",
+          "default": 32,
+          "description": "CPUs for Gubbins."
+        }
+      }
+    }
+  },
+  "allOf": [
+    { "$ref": "#/definitions/input_output_options" },
+    { "$ref": "#/definitions/organism_specific_options" },
+    { "$ref": "#/definitions/reference_databases" },
+    { "$ref": "#/definitions/sample_selection_options" },
+    { "$ref": "#/definitions/pipeline_branches" },
+    { "$ref": "#/definitions/resource_options" }
+  ]
 }
